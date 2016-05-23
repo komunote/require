@@ -32,24 +32,24 @@ require(["util", "text!util.html"], function(util, tpl){
 
 define(["text!util.html"], function (tpl) {
 	return {
-		utils : function() {			
-			return template(tpl, {
-				firstname		: "David", 
-				lastname		: "Chabrier",
-				'for:customers'	: [
-					{
-						id			: 1,
-						lastname	: "Chabrier 1",
-						firstname	: "David 1"						
-					},
-					{						
-						firstname	: "David 2", 
-						lastname	: "Chabrier 2",
-						id			:2
-					},
-				]					
-			});
-		}
+	utils : function() {			
+		return template(tpl, {
+			firstname		: "David", 
+			lastname		: "Chabrier",
+			'for-customers'	: [
+				{
+					id			: 1,
+					lastname	: "Chabrier 1",
+					firstname	: "David 1"						
+				},
+				{						
+					firstname	: "David 2", 
+					lastname	: "Chabrier 2",
+					id			:2
+				},
+			]					
+		});
+	}
 	}
 });
 
@@ -60,7 +60,7 @@ define(["text!util.html"], function (tpl) {
 <p>firstname : {{firstname}}</p>
 <p>lastname : {{lastname}}</p>
 <ul>
-	{{for:customers}}
+	{{for-customers}}
 	<li><a href="#" id="{{customers.id}}">{{customers.firstname}} {{customers.lastname}}</a></li>
-	{{endfor:customers}}
+	{{endfor-customers}}
 </ul>
