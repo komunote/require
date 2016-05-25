@@ -1,0 +1,10 @@
+<h1>Titre</h1>
+<p>firstname : {{firstname}}</p>
+<p>lastname : {{lastname}}</p>
+<ul>
+	{{for-customers}}
+	<li><a href="#" id="{{customers.id}}">{{customers.firstname}} {{customers.lastname}}</a></li>
+	{{endfor-customers}}
+</ul>
+<input type="text" data-change="customerTextChange" value="" />
+<input type="button" data-click="customerButtonClick" value="click" />
