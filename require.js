@@ -5,6 +5,7 @@ var require, define, r, template;
 		baseScripts : "/",
 		baseTemplates : "/",
 		functions : {},
+		events:{},
 		require: function (file) 
 		{
 			return new Promise(
@@ -25,22 +26,10 @@ var require, define, r, template;
 				}
 			);
 		},
-		post: function (file, data) 
-		{
-			return r.load(file, 'POST', data);
-		},
-		get: function (file, data) 
-		{
-			return r.load(file, 'GET', data);
-		},
-		put: function (file, data) 
-		{
-			return r.load(file, 'PUT', data);
-		},
-		delete: function (file, data) 
-		{
-			return r.load(file, 'DELETE', data);
-		},
+		post: function(file, data){return r.load(file, 'POST', data);},
+		get: function(file){return r.load(file, 'GET');},
+		put: function(file, data){return r.load(file, 'PUT', data);},
+		delete: function(file, data){return r.load(file, 'DELETE', data);},
 		load: function (file, method, data) 
 		{
 			return new Promise(
@@ -89,7 +78,7 @@ var require, define, r, template;
 							"application/javascript"
 					);
 					
-					if (method == 'POST') {
+					if (typeof data !== 'undefined' && (method == 'POST' || method == 'PUT')) {
 						var formData = new FormData();
 						formData.append("data", data);
 						xhr.send(data);
@@ -98,6 +87,20 @@ var require, define, r, template;
 					}					
 				}
 			);
+		},
+		eventsWatcher: function(element) {
+			['click', 'change'].forEach(function(type) {
+				console.log('body changed');
+				var elements = element.querySelectorAll(`[data-${type}]`);				
+				for(var i=0; i<elements.length; i++) {										
+					elements[i].addEventListener(type, window[elements[i].dataset[type]], false);					
+				};
+			});			
+		},
+		append: function(html, element) {
+			element.insertAdjacentHTML('beforeEnd', html);
+			r.eventsWatcher(element);
+			return element;
 		}
 	};
 		
@@ -124,7 +127,11 @@ var require, define, r, template;
 									r.require(item)
 									.then(
 										function (val) {
-										_resolve(val);
+											_resolve(val);
+									}).catch(
+										function(_error) {
+											console.log(_error);
+											__reject(_error);
 									});
 								}
 							)
@@ -137,8 +144,7 @@ var require, define, r, template;
 					function (values) 
 					{
 						if (values instanceof Promise) {
-							values
-							.then(
+							values.then(
 								function () {
 									resolve(callback.apply(this, values));
 								}
@@ -241,6 +247,8 @@ var require, define, r, template;
 
 	var script = document.currentScript;	
 	if(script.dataset.main) {
-		require(script.dataset.main);
-	}
+		require(script.dataset.main).then(function(){			
+			console.log('main script loaded');
+		});
+	}		
 })();
