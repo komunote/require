@@ -1,6 +1,25 @@
-<h1>Titre</h1>
-<p>firstname : {{firstname}}</p>
-<p>lastname : {{lastname}}</p>
+<h1>Identity</h1>
+<p>firstname : {{identity.firstname}}</p>
+<p>lastname : {{identity.lastname}}</p>
+<p>Address:</p>
+<ul>
+	<li>City : {{identity.address.city}}</li>
+	<li>Zipcode : {{identity.address.zipcode}}</li>
+</ul>
+<ul>
+	{{for-identity.customers}}
+	<li>
+		<a href="#" id="{{identity.customers.id}}">{{identity.customers.firstname}} {{identity.customers.lastname}}</a>
+		<ol>
+			{{for-customers.tels}}
+			<li>{{customers.tels.type}} {{customers.tels.number}} (perso:{{tels.emails.personnal}} pro:{{tels.emails.pro}})</li>
+			{{endfor-customers.tels}}
+		</ol>
+	</li>
+	{{endfor-identity.customers}}
+</ul>
+
+
 <ul>
 	{{for-customers}}
 	<li><a href="#" id="{{customers.id}}">{{customers.firstname}} {{customers.lastname}}</a></li>
