@@ -89,8 +89,7 @@ var require, define, r, template;
 			);
 		},
 		eventsWatcher: function(element) {
-			['click', 'change'].forEach(function(type) {
-				console.log('body changed');
+			['click', 'change'].forEach(function(type) {				
 				var elements = element.querySelectorAll(`[data-${type}]`);				
 				for(var i=0; i<elements.length; i++) {										
 					elements[i].addEventListener(type, window[elements[i].dataset[type]], false);					
@@ -107,7 +106,12 @@ var require, define, r, template;
 	require = function (dependencies, callback) 
 	{
 		if(!callback) {
-			callback = function(){};
+			if (typeof dependencies === 'function') {
+				callback = dependencies;
+				dependencies = [];
+			} else {
+				callback = function(){};
+			}			
 		}
 		return new Promise(
 			function (resolve, reject) 
@@ -195,29 +199,61 @@ var require, define, r, template;
 	template = function (tpl, values) 
 	{
 		function _clean(tpl) 
-		{
-			return tpl.replace(/{{( )*/gi, '{{').replace(/( )*}}/gi, '}}');
+		{			
+			return tpl.replace(/{{( )*/gi, '{{').replace(/( )*}}/gi, '}}');						
 		}
 		
-		function _forEach(tpl, p) 
+		function _forEach(tpl, p, val) 
 		{
-			var row = tpl.split('{{' + p + '}}')[1].split('{{end' + p + '}}')[0];
-			var rows = '', key = p.split('for-')[1];			
+			var data, rows = '',
+				row = tpl.split('{{for-' + p + '}}')[1].split('{{endfor-' + p + '}}')[0];
 
-			for(var i in values[p]) {						
+			if(p.indexOf('.') >-1) {
+				var ex = p.split('.');
+				data = val? val : values[ex[0]][ex[1]];
+
+			} else {
+				data = val ? val[p] : values[p];
+			}
+			for(var i in data) {
 				var tmp = row;
-				Object.getOwnPropertyNames(values[p][i]).forEach(
+				Object.getOwnPropertyNames(data[i]).forEach(
 					function(_p)
 					{
-						tmp = tmp.replace(new RegExp('{{' + key + '.' + _p + '}}', 'gi'), values[p][i][_p]);
+						if(Array.isArray(data[i][_p])) {
+							tmp = _forEach(tmp, `${ex[1]}.${_p}`, data[i][_p]);
+						} else if(typeof data[i][_p] === 'object') {
+
+							tmp = _nested(tmp, `${ex[1]}.${_p}`, data[i][_p]);
+						} else {
+							tmp = tmp.replace(new RegExp('{{' + p + '.' + _p + '}}', 'gi'), data[i][_p] ? data[i][_p] : ' ');
+						}
+						
 					}
 				);
 				rows += tmp;
 			}
 			
 			return tpl.replace(row, rows)
-				.replace(new RegExp('{{' + p + '}}', 'gi'), '')
-				.replace(new RegExp('{{end' + p + '}}', 'gi'), '');
+				.replace(new RegExp('{{for-' + p + '}}', 'gi'), ' ')
+				.replace(new RegExp('{{endfor-' + p + '}}', 'gi'), ' ');
+		}
+		
+		function _nested(tpl, p, items) 
+		{			
+			for(var i in items){
+				if(items[i] && Object.getOwnPropertyNames(items[i])){
+					if(Array.isArray(items[i])) {
+						tpl = _forEach(tpl, `${p}.${i}`);
+					} else if(typeof items[i] === 'object') {			
+						tpl = _nested(tpl, `${p}.${i}`, items[i]);
+					} else {						
+						tpl = tpl.replace(new RegExp(`{{${p}.${i}}}`, 'gi'), items[i] ? items[i] : ' ');
+					}						
+				}					
+			};			
+			
+			return tpl;
 		}
 
 		function _build(tpl, items)
@@ -225,12 +261,16 @@ var require, define, r, template;
 			items.forEach(
 				function (p)
 				{
-					if (p.match(new RegExp('for-', 'gi')))
+					if (Array.isArray(values[p]))
 					{
 						tpl =  _forEach(tpl, p);
 					} else
 					{
-						tpl = tpl.replace(new RegExp('{{' + p + '}}', 'gi'), values[p]);
+						if(typeof values[p] === 'object') {
+							tpl = _nested(tpl, p, values[p]);						
+						} else {
+							tpl = tpl.replace(new RegExp('{{' + p + '}}', 'gi'), values[p] ? values[p] : ' ');
+						}						
 					}
 				}
 			);
@@ -238,10 +278,8 @@ var require, define, r, template;
 			return tpl;
 		}
 
-		if (typeof tpl === 'string') {
-			tpl = _clean(tpl);
-			tpl = _build(tpl, Object.getOwnPropertyNames(values));
-			return tpl;
+		if (typeof tpl === 'string') {						
+			return _build(_clean(tpl), Object.getOwnPropertyNames(values));
 		}
 	}
 
