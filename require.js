@@ -202,7 +202,7 @@ var require, define, r, template;
 		{
 			var tmp = tpl.replace(/{{( )*/gi, '{{').replace(/( )*}}/gi, '}}');
 			if(typeof forced !== 'undefined' && forced) {
-				tmp = tmp.replace(/{{[\w\.]*}}/gi, '');
+				tmp = tmp.replace(/{{[\w\.\-]*}}/gi, '');
 			}
 			return tmp;
 		}
