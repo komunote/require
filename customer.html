@@ -9,7 +9,7 @@
 <ul>
 	{{for-identity.customers}}
 	<li>
-		<a href="#" id="{{identity.customers.id}}">{{identity.customers.firstname}} {{identity.customers.lastname}}</a>
+		<a href="#" data-click="customerButtonClick" id="{{identity.customers.id}}">{{identity.customers.firstname}} {{identity.customers.lastname}}</a>
 		<ol>
 			{{for-customers.tels}}
 			<li>{{customers.tels.type}} {{customers.tels.number}} (perso:{{tels.emails.personnal}} pro:{{tels.emails.pro}})</li>
