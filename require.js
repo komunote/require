@@ -2,8 +2,10 @@ var require, define, r, template;
 (function () {
 	'use strict';
 	r = {
-		baseScripts : "/",
-		baseTemplates : "/",
+		path:{
+			scripts : "/",
+			templates : "/"
+		},
 		functions : {},
 		events:{},
 		require: function (file) 
@@ -64,10 +66,10 @@ var require, define, r, template;
 					xhr.open(
 						method,
 						file.indexOf('text!') > -1 ?
-							r.baseTemplates + file.split('text!')[1] :
+							r.path.templates + file.split('text!')[1] :
 							file.indexOf('/') === 0 ?
 								file :
-								r.baseScripts 	+ file + (file.indexOf('.js') > -1 ? ".js" : ''),
+								r.path.scripts 	+ file + (file.indexOf('.js') > -1 ? ".js" : ''),
 						true
 					);
 
