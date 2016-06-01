@@ -1,19 +1,15 @@
 define(function() {
-	r.baseScripts = "/js/scripts/";	
-	r.baseTemplates = "/js/views/";
+	r.path.scripts = "/js/scripts/";	
+	r.path.templates = "/js/views/";
 });
 
-require(["customer", "text!customer.html"/*, "../lib/i18n"*/], function(customer, customerTpl/*, i18n*/){
-	
-	//var tpl = customer.utils();	
-console.log(customer);
+require(["customer", "text!customer.html"], function(customer, customerTpl){
 	r.get('/user/1/')
-	.then(function(data) {			
+	.then(function(data) {
 		var html = template(customerTpl, data);
-		console.log('---------------customer.js loaded----------------');	
-		console.log(html);
-		console.log(r.append(html, document.body));
-		//document.body.innerHTML += html;
+		console.log('---------------customer.js loaded----------------');
+		r.append(html, document.body);
+		console.log(customer.getView());
 	})
 	.catch(function(error){
 		console.log(error);
@@ -22,5 +18,5 @@ console.log(customer);
 
 r.post('/user/add', {firstname:'David', lastname:'Chabrier'})
 .then(function(data) {
-	console.log(data);
+	//console.log(data);
 });
