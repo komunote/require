@@ -198,9 +198,13 @@ var require, define, r, template;
 
 	template = function (tpl, values) 
 	{
-		function _clean(tpl) 
-		{			
-			return tpl.replace(/{{( )*/gi, '{{').replace(/( )*}}/gi, '}}');						
+		function _clean(tpl, forced) 
+		{
+			var tmp = tpl.replace(/{{( )*/gi, '{{').replace(/( )*}}/gi, '}}');
+			if(typeof forced !== 'undefined' && forced) {
+				tmp = tmp.replace(/{{[\w\.]*}}/gi, '');
+			}
+			return tmp;
 		}
 		
 		function _forEach(tpl, p, val) 
@@ -223,7 +227,6 @@ var require, define, r, template;
 						if(Array.isArray(data[i][_p])) {
 							tmp = _forEach(tmp, `${ex[1]}.${_p}`, data[i][_p]);
 						} else if(typeof data[i][_p] === 'object') {
-
 							tmp = _nested(tmp, `${ex[1]}.${_p}`, data[i][_p]);
 						} else {
 							tmp = tmp.replace(new RegExp('{{' + p + '.' + _p + '}}', 'gi'), data[i][_p] ? data[i][_p] : ' ');
@@ -278,9 +281,10 @@ var require, define, r, template;
 			return tpl;
 		}
 
-		if (typeof tpl === 'string') {						
-			return _build(_clean(tpl), Object.getOwnPropertyNames(values));
-		}
+		
+		return typeof tpl === 'string' ?
+			_clean(_build(_clean(tpl), Object.getOwnPropertyNames(values)), true) : 
+			false;
 	}
 
 	var script = document.currentScript;	
