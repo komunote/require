@@ -9,7 +9,7 @@
 <ul>
 	{{for-identity.customers}}
 	<li>
-		<a href="#" data-click="customerButtonClick" id="{{identity.customers.id}}">{{identity.customers.firstname}} {{identity.customers.lastname}}</a>
+		<a href="#" data-click="{{onclick}}" id="{{identity.customers.id}}">{{identity.customers.firstname}} {{identity.customers.lastname}}</a>
 		<ol>
 			{{for-customers.tels}}
 			<li>{{customers.tels.type}} {{customers.tels.number}} (perso:{{tels.emails.personnal}} pro:{{tels.emails.pro}})</li>
@@ -25,5 +25,5 @@
 	<li><a href="#" id="{{customers.id}}">{{customers.firstname}} {{customers.lastname}}</a></li>
 	{{endfor-customers}}
 </ul>
-<input type="text" data-change="customerTextChange" value="" />
+<input type="text" data-change="{{onchange}}" value="" />
 <input type="button" data-click="customerButtonClick" value="click" />
