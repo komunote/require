@@ -8,26 +8,26 @@ let require, define, r, template;
 		},
 		functions : {},
 		events:{},
-		require: file => new Promise((resolve, reject) =>
+		require: f => new Promise((res, reject) =>
 		{
-			r.load(file).then(val =>
+			r.load(f).then(val =>
 			{
-				resolve(val);
+				res(val);
 			}).catch (error =>
 			{
 				console.log(error);
 				reject(error);
 			});
 		}),
-		post: (file, data) => r.load(file, 'POST', data),
-		get: file => r.load(file, 'GET'),
-		put: (file, data) => r.load(file, 'PUT', data),
-		delete: (file, data) => r.load(file, 'DELETE', data),
-		load: (file, method, data) => new Promise(
-				function (resolve, reject) 
+		post: (f, data) => r.load(f, 'POST', data),
+		get: f => r.load(f, 'GET'),
+		put: (f, data) => r.load(f, 'PUT', data),
+		delete: (f, data) => r.load(f, 'DELETE', data),
+		load: (f, method, data) => new Promise(
+				function (res, reject) 
 				{
-					if(r.functions[file]) {
-						return resolve(r.functions[file]);
+					if(r.functions[f]) {
+						return res(r.functions[f]);
 					}
 					
 					let xhr = new XMLHttpRequest();
@@ -37,13 +37,13 @@ let require, define, r, template;
 						if (xhr.status == 200 && xhr.readyState == 4) {							
 							if (xhr.getResponseHeader('content-type')
 								.indexOf('javascript') > -1) {
-								return resolve(r.functions[file] = eval(xhr.responseText));									
+								return res(r.functions[f] = eval(xhr.responseText));									
 							} 
 							else if (xhr.getResponseHeader('content-type')
 								.indexOf('json') > -1) {
-								return resolve(r.functions[file] = JSON.parse(xhr.responseText));
+								return res(r.functions[f] = JSON.parse(xhr.responseText));
 							}else {
-								return resolve(r.functions[file] = xhr.responseText);								
+								return res(r.functions[f] = xhr.responseText);								
 							}
 						}
 					};
@@ -54,17 +54,17 @@ let require, define, r, template;
 
 					xhr.open(
 						method,
-						file.indexOf('text!') > -1 ?
-							r.path.templates + file.split('text!')[1] :
-							file.indexOf('/') === 0 ?
-								file :
-								r.path.scripts 	+ file + (file.indexOf('.js') > -1 ? ".js" : ''),
+						f.indexOf('text!') > -1 ?
+							r.path.templates + f.split('text!')[1] :
+							f.indexOf('/') === 0 ?
+								f :
+								r.path.scripts 	+ f + (f.indexOf('.js') > -1 ? ".js" : ''),
 						true
 					);
 
 					xhr.setRequestHeader(
 						"Content-type",
-						file.indexOf('text!') > -1 ?
+						f.indexOf('text!') > -1 ?
 							"text/html" :
 							"application/javascript"
 					);
@@ -79,45 +79,45 @@ let require, define, r, template;
 				}
 			)
 		,
-		eventsWatcher: (element = document) => {
+		eventsWatcher: (el = document) => {
 			['click', 'change'].forEach(type =>
 			{
-				let elements = element.querySelectorAll(`[data-${type}]`);
-				for(let element of elements) {					
-					element.addEventListener(type, window[element.dataset[type]], false);
+				let els = el.querySelectorAll(`[data-${type}]`);
+				for(let el of els) {					
+					el.addEventListener(type, window[el.dataset[type]], false);
 				};
 			});			
 		},
-		append: (html, element = document.body) => {
-			element.insertAdjacentHTML('beforeEnd', html);
-			r.eventsWatcher(element);
-			return element;
+		append: (html, el = document.body) => {
+			el.innerHTML += html;
+			r.eventsWatcher(el);
+			return el;
 		}
 	};
 		
-	require = (dependencies, callback) =>
+	require = (dep, cb) =>
 	{
-		if(!callback) {
-			if (typeof dependencies === 'function') {
-				callback = dependencies;
-				dependencies = [];
+		if(!cb) {
+			if (typeof dep === 'function') {
+				cb = dep;
+				dep = [];
 			} else {
-				callback = function(){};
+				cb = function(){};
 			}			
 		}
-		return new Promise((resolve, reject) =>
+		return new Promise((res, reject) =>
 		{
 			let promises = [];
-			if (!Array.isArray(dependencies)) {
-				dependencies = [dependencies];
+			if (!Array.isArray(dep)) {
+				dep = [dep];
 			}
 
-			dependencies.forEach(item =>
+			dep.forEach(item =>
 			{
-				promises.push(new Promise((_resolve, _reject) =>
+				promises.push(new Promise((_res, _reject) =>
 				{
 					r.require(item)
-					.then(val =>{_resolve(val)})
+					.then(val =>{_res(val)})
 					.catch(_error => 
 					{
 						console.log(_error);
@@ -133,11 +133,11 @@ let require, define, r, template;
 				if (values instanceof Promise) {
 					values.then(
 						function () {
-							resolve(callback.apply(this, values));
+							res(cb.apply(this, values));
 						}
 					);
 				} else {					
-					resolve(callback.apply(this, values));
+					res(cb.apply(this, values));
 				}
 			}).catch(error =>
 			{
@@ -147,19 +147,19 @@ let require, define, r, template;
 		});
 	};
 
-	define = function (dependencies, callback)
+	define = function (dep, cb)
 	{
-		if (typeof dependencies === 'function') {
-			return dependencies();
+		if (typeof dep === 'function') {
+			return dep();
 		}
-		return new Promise((resolve, reject) =>
+		return new Promise((res, reject) =>
 		{
-			require(dependencies, values =>
+			require(dep, values =>
 			{
 				if (Array.isArray(values)) {
-					resolve(callback.apply(this, values));
+					res(cb.apply(this, values));
 				} else {
-					resolve(callback(values));
+					res(cb(values));
 				}
 			});
 		}).catch (error =>
@@ -260,9 +260,12 @@ let require, define, r, template;
 			false;
 	}
 
-	let script = document.currentScript;	
-	if(script.dataset.main) {
-		require(script.dataset.main).then(function(){			
+	let script = document.currentScript || (function() {
+      let scripts = document.getElementsByTagName('script');
+      return scripts[scripts.length - 1];
+    })();	
+	if(script.getAttribute('data-main')) {
+		require(script.getAttribute('data-main')).then(function(){			
 			console.log('main script loaded');
 		});
 	}		
