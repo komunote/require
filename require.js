@@ -26,53 +26,59 @@ let require, define, r, template;
 		load: (f, method, data) => new Promise(
 				function (res, reject) 
 				{
-					if(typeof r.functions[f] !== 'undefined') {
-						return res(r.functions[f]);
-					}
+					try {
+						
 					
-					let xhr = new XMLHttpRequest();
-
-					xhr.onreadystatechange = function () 
-					{
-						if (xhr.status == 200 && xhr.readyState == 4) {							
-							if (xhr.getResponseHeader('content-type')
-								.indexOf('javascript') > -1) {
-								return res(r.functions[f] = eval(xhr.responseText));									
-							} 
-							else if (xhr.getResponseHeader('content-type')
-								.indexOf('json') > -1) {
-								return res(r.functions[f] = JSON.parse(xhr.responseText));
-							}else {
-								return res(r.functions[f] = xhr.responseText);								
-							}
+						if(typeof r.functions[f] !== 'undefined') {
+							return res(r.functions[f]);
 						}
-					};
-					
-					if (typeof method === 'undefined') {
-						method = 'GET';
+						
+						let xhr = new XMLHttpRequest();
+
+						xhr.onreadystatechange = function () 
+						{
+							if (xhr.status == 200 && xhr.readyState == 4) {							
+								if (xhr.getResponseHeader('content-type')
+									.indexOf('javascript') > -1) {
+									return res(r.functions[f] = eval(xhr.responseText));									
+								} 
+								else if (xhr.getResponseHeader('content-type')
+									.indexOf('json') > -1) {
+									return res(r.functions[f] = JSON.parse(xhr.responseText));
+								}else {
+									return res(r.functions[f] = xhr.responseText);								
+								}
+							}
+						};
+						
+						if (typeof method === 'undefined') {
+							method = 'GET';
+						}
+
+						xhr.open(
+							method,
+							f.indexOf('text!') > -1 ?
+								r.path.templates + f.split('text!')[1] :
+								f.indexOf('/') === 0 ?
+									f :
+									r.path.scripts 	+ f + (f.indexOf('.js') > -1 ? ".js" : '')
+						);
+
+						xhr.setRequestHeader(
+							"Content-type",
+							f.indexOf('text!') > -1 ? "text/html" : "application/javascript"
+						);
+						
+						if (typeof data !== 'undefined' && (method == 'POST' || method == 'PUT')) {
+							let formData = new FormData();
+							formData.append("data", data);
+							xhr.send(data);
+						} else {
+							xhr.send();
+						}					
+					} catch(e){
+						return reject(e);
 					}
-
-					xhr.open(
-						method,
-						f.indexOf('text!') > -1 ?
-							r.path.templates + f.split('text!')[1] :
-							f.indexOf('/') === 0 ?
-								f :
-								r.path.scripts 	+ f + (f.indexOf('.js') > -1 ? ".js" : '')
-					);
-
-					xhr.setRequestHeader(
-						"Content-type",
-						f.indexOf('text!') > -1 ? "text/html" : "application/javascript"
-					);
-					
-					if (typeof data !== 'undefined' && (method == 'POST' || method == 'PUT')) {
-						let formData = new FormData();
-						formData.append("data", data);
-						xhr.send(data);
-					} else {
-						xhr.send();
-					}					
 				}
 			)
 		,
@@ -89,9 +95,33 @@ let require, define, r, template;
 			);
 		},
 		append: (html, el = document.body) => {
-			el.innerHTML += html;
-			r.eventsWatcher(el);
-			return el;
+			try {
+				if(typeof html ==='object' && typeof el === 'string'){
+					let _html = html;
+					html = el;
+					el = _html;
+				}
+				el.innerHTML += html;
+				r.eventsWatcher(el);
+				return el;
+			}catch(e){
+				return e;
+			}
+			
+		},
+		attach: (name, func) => {
+			try {
+				if(typeof name ==='function' && typeof func === 'string'){
+					let _name = name;
+					name = func;
+					func = _name;
+				}
+				window[name]=func;
+				return this;
+			}catch(e){
+				return e;
+			}
+			
 		}
 	};
 		
