@@ -26,7 +26,7 @@ let require, define, r, template;
 		load: (f, method, data) => new Promise(
 				function (res, reject) 
 				{
-					if(r.functions[f]) {
+					if(typeof r.functions[f] !== 'undefined') {
 						return res(r.functions[f]);
 					}
 					
@@ -58,15 +58,12 @@ let require, define, r, template;
 							r.path.templates + f.split('text!')[1] :
 							f.indexOf('/') === 0 ?
 								f :
-								r.path.scripts 	+ f + (f.indexOf('.js') > -1 ? ".js" : ''),
-						true
+								r.path.scripts 	+ f + (f.indexOf('.js') > -1 ? ".js" : '')
 					);
 
 					xhr.setRequestHeader(
 						"Content-type",
-						f.indexOf('text!') > -1 ?
-							"text/html" :
-							"application/javascript"
+						f.indexOf('text!') > -1 ? "text/html" : "application/javascript"
 					);
 					
 					if (typeof data !== 'undefined' && (method == 'POST' || method == 'PUT')) {
@@ -80,13 +77,16 @@ let require, define, r, template;
 			)
 		,
 		eventsWatcher: (el = document) => {
-			['click', 'change'].forEach(type =>
-			{
-				let els = el.querySelectorAll(`[data-${type}]`);
-				for(let el of els) {					
-					el.addEventListener(type, window[el.dataset[type]], false);
-				};
-			});			
+			['click', 'change', 'blur', 'mousein', 'mouseout']
+			.forEach(type =>
+				{
+					let els = el.querySelectorAll(`[data-${type}]`);
+
+					for(let i=0; i < els.length; i++) {
+						els[i].addEventListener(type, window[els[i].dataset[type]], false);
+					}				
+				}
+			);
 		},
 		append: (html, el = document.body) => {
 			el.innerHTML += html;
@@ -216,7 +216,7 @@ let require, define, r, template;
 		}
 		
 		function _nested(tpl, p, items)
-		{			
+		{					
 			for(let i in items){
 				if(items[i] && Object.getOwnPropertyNames(items[i])){
 					if(Array.isArray(items[i])) {
@@ -227,7 +227,7 @@ let require, define, r, template;
 						tpl = tpl.replace(new RegExp(`{{${p}.${i}}}`, 'gi'), items[i] ? items[i] : ' ');
 					}						
 				}					
-			};			
+			};
 			
 			return tpl;
 		}
@@ -268,5 +268,5 @@ let require, define, r, template;
 		require(script.getAttribute('data-main')).then(function(){			
 			console.log('main script loaded');
 		});
-	}		
+	}	
 }
