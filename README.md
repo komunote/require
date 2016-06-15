@@ -15,11 +15,10 @@ define(function() {
 	r.baseTemplates = "/js/views/";
 });
 
-require(["util", "text!util.html"], function(util, tpl){
-	
-	var tpl = util.utils();	
-		
-	console.log(		
+require(["util", "text!util.html"], 
+	function(util, tpl){
+		let tpl = util.utils();
+		console.log(		
 		template(tpl, {
 			firstname		: "David", 
 			lastname		: "Chabrier"
@@ -32,24 +31,24 @@ require(["util", "text!util.html"], function(util, tpl){
 
 define(["text!util.html"], function (tpl) {
 	return {
-	utils : function() {			
-		return template(tpl, {
-			firstname		: "David", 
-			lastname		: "Chabrier",
-			'for-customers'	: [
-				{
-					id			: 1,
-					lastname	: "Chabrier 1",
-					firstname	: "David 1"						
-				},
-				{						
-					firstname	: "David 2", 
-					lastname	: "Chabrier 2",
-					id			:2
-				},
-			]					
-		});
-	}
+		utils : function() {			
+			return template(tpl, {
+				firstname		: "David", 
+				lastname		: "Chabrier",
+				'for-customers'	: [
+					{
+						id			: 1,
+						lastname	: "Chabrier 1",
+						firstname	: "David 1"						
+					},
+					{						
+						firstname	: "David 2", 
+						lastname	: "Chabrier 2",
+						id			:2
+					},
+				]					
+			});
+		}
 	}
 });
 
