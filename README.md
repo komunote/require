@@ -1,5 +1,5 @@
 # require
-light require js with templating feature
+light javascript files loader with client side templating feature and late events binding
 
 How to use it :
 
@@ -10,6 +10,7 @@ How to use it :
 
 2 - main.js definition :
 
+// paths configuration
 define(function() {
 	r.baseScripts = "/js/scripts/";	
 	r.baseTemplates = "/js/views/";
