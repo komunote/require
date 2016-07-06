@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Test</title>		
+		<style>
+						
+			
+			
+			@media (min-width: 1200px) {
+				.cell{
+					width:24em; height:24em;
+					float:left;
+					padding:2px;margin:2px;
+					border:2px #ddd dotted; 
+					display:inline-table;
+					/*transform-origin: 100% 0%;
+					transform:rotateY(-90deg) translateZ(5em);*/
+				}
+				.c{border:1px #000 solid; padding:0.25em;margin:0.25em; float:left;}
+				.c11{width:10.5em; height:10.5em;background-color:#ccc;}
+				.c12{width:10.5em; height:22em;background-color:#fff;}
+				.c22{width:22em; height:22em;background-color:#eee;}
+				.c21{width:22em; height:10.5em;background-color:#aaa;}
+			}
+			
+			@media (max-width: 1200px) {
+				.cell{
+					width:31%; height:24em;
+					float:left;
+					padding:2px;margin:2px;
+					border:2px #ddd dotted; 
+					display:inline-table;
+				}
+				.c{border:1px #000 solid; padding:2px;margin:2px; float:left;}
+				.c11{width:43%; height:10.5em;background-color:#ccc;}
+				.c12{width:43%; height:22em;background-color:#fff;}
+				.c22{width:92%; height:22em;background-color:#eee;}
+				.c21{width:92%; height:10.5em;background-color:#aaa;}
+			}
+			
+			@media (max-width: 800px) {
+				.cell{
+					width:44%; height:24em;
+					float:left;
+					padding:0.25em;margin:0.25em;
+					border:2px #ddd dotted; 
+					display:inline-table;
+				}
+				.c{border:1px #000 solid; padding:2px;margin:2px; float:left;}
+				.c11{width:43%; height:10.5em;background-color:#ccc;}
+				.c12{width:43%; height:22em;background-color:#fff;}
+				.c22{width:92%; height:22em;background-color:#eee;}
+				.c21{width:92%; height:10.5em;background-color:#aaa;}
+			}
+			
+			@media (max-width: 400px) {
+				.cell{
+					width:98%; height:24em;
+					float:left;
+					padding:0.25em;margin:0.25em;
+					border:2px #ddd dotted; 
+					display:inline-table;
+				}
+				.c{border:1px #000 solid; padding:2px;margin:2px; float:left;}
+				.c11{width:47%; height:11.5em;background-color:#ccc;}
+				.c12{width:47%; height:23em;background-color:#fff;}
+				.c22{width:98%; height:23em;background-color:#eee;}
+				.c21{width:97%; height:11.5em;background-color:#aaa;}
+			}
+			
+			
+			
+			
+			
+			/*.grid{
+				-webkit-column-count: 5;
+				-webkit-column-gap:   0px;
+				-moz-column-count:    5;
+				-moz-column-gap:      0px;
+				column-count:         5;
+				column-gap:           0px;  
+			}*/
+			
+			/*@media (max-width: 1200px) {
+				.grid {
+					-moz-column-count:    4;
+					-webkit-column-count: 4;
+					column-count:         4;
+				}
+			}
+			@media (max-width: 1000px) {
+				.grid {
+					-moz-column-count:    3;
+					-webkit-column-count: 3;
+					column-count:         3;
+				}
+			}
+			@media (max-width: 800px) {
+				.grid {
+					-moz-column-count:    2;
+					-webkit-column-count: 2;
+					column-count:         2;
+				}
+			}
+			@media (max-width: 400px) {
+			  .grid {
+				  -moz-column-count:    1;
+				  -webkit-column-count: 1;
+				  column-count:         1;
+			  }
+			}*/
+		</style>
+	</head>
+	<body>
+		<section class="grid">
+			
+			<div class="cell">
+				<div class="c c22">22</div>
+			</div>
+			
+			<div class="cell">
+				<div class="c c21">21</div>
+				<div class="c c21">21</div>				
+			</div>
+			
+			<div class="cell">
+				<div class="c c12">12</div>
+				<div class="c c12">12</div>				
+			</div>
+			
+			<div class="cell">
+				<div class="c c21">21</div>
+				<div class="c c11">11</div>
+				<div class="c c11">11</div>				
+			</div>			
+			
+			<div class="cell">
+				<div class="c c11">11</div>
+				<div class="c c11">11</div>
+				<div class="c c11">11</div>
+				<div class="c c11">11</div>
+			</div>
+			
+			<div class="cell">
+				<div class="c c11">11</div>
+				<div class="c c11">11</div>
+				<div class="c c21">21</div>
+			</div>		
+			
+			<hr/>
+			
+			<div class="cell">
+				<div class="c c22">22</div>
+			</div>
+			<div class="cell">
+				<div class="c c22">22</div>
+			</div>
+			<div class="cell">
+				<div class="c c22">22</div>
+			</div>
+				
+		</section>
+	</body>
+</html>
